@@ -1,29 +1,26 @@
 <template>
-  <div class="app" :class="{expanded: showTimelineView || showFullView }" data-app="webrecorder-replay-app">
+  <div v-if="displayApp" class="app fixed-top" :class="{expanded: showTimelineView || showFullView }" data-app="webrecorder-replay-app" ref="appContainer">
     <!-- Top navbar -->
     <nav
-      class="navbar navbar-light navbar-expand-lg fixed-top top-navbar justify-content-center"
+      class="navbar navbar-light navbar-expand-lg top-navbar justify-content-center"
       :style="navbarStyle">
-      <a class="navbar-brand flex-grow-1 my-1" :href="config.logoHomeUrl" v-if="config.logoHomeUrl">
+      <a class="navbar-brand my-1" :href="config.logoHomeUrl" v-if="config.logoHomeUrl">
         <img :src="config.logoImg" id="logo-img" alt="_('pywb logo')">
       </a>
-      <div class="navbar-brand flex-grow-1 my-1" v-else>
+      <div class="navbar-brand my-1" v-else>
         <img :src="config.logoImg" id="logo-img" alt="_('pywb logo')">
       </div>
-      <div class="flex-grow-1 d-flex" id="searchdiv">
-        <form
-          class="form-inline my-2 my-md-0 mx-lg-auto"
-          role="search"
-          @submit="gotoUrl">
-          <input
-            id="theurl"
-            type="text"
-            :value="config.url"
-            height="31"
-            aria-label="_('Search for archival capture of URL')"
-            title="_('Search for archival capture of URL')"></input>
-        </form>
+
+      <div class="nav-links">
+        <a href="https://rhizome.org">rhizome.org</a>
+        <span class="divider"></span>
+        <a href="https://artbase.rhizome.org">ArtBase</a>
+        <span class="divider" v-if="config.artwork"></span>
+        <a v-if="config.artwork" :href="config.artworkLink">{{ config.artwork }}</a>
+        <span class="divider"></span>
+        <span v-if="config.title">{{ config.title }}</span>
       </div>
+
       <button
         class="navbar-toggler btn btn-sm"
         id="collapse-button"
@@ -37,6 +34,7 @@
       </button>
       <div class="collapse navbar-collapse ml-auto" id="navbarCollapse">
         <ul class="navbar-nav ml-3" id="toggles">
+          <!--
           <li class="nav-item">
             <button
               class="btn btn-sm"
@@ -57,12 +55,14 @@
               <i class="fas fa-arrow-right" :title="_('Next capture')"></i>
             </button>
           </li>
+          -->
           <li class="nav-item active">
             <button
               class="btn btn-sm"
               :class="{active: showFullView, 'btn-outline-light': lightButtons, 'btn-outline-dark': !lightButtons}"
               :aria-pressed="(showFullView ? true : false)"
               @click="showFullView = !showFullView"
+              v-if="calendarViewEnabled && hasReplayFrame()"
               :title="(showFullView ? _('Hide calendar') : _('Show calendar'))">
               <i class="far fa-calendar-alt"></i>
             </button>
@@ -73,6 +73,7 @@
               :class="{active: showTimelineView, 'btn-outline-light': lightButtons, 'btn-outline-dark': !lightButtons}"
               :aria-pressed="showTimelineView"
               @click="toggleTimelineView"
+              v-if="timelineViewEnabled && hasReplayFrame()"
               :title="(showTimelineView ? _('Hide timeline') : _('Show timeline'))">
               <i class="far fa-chart-bar"></i>
             </button>
@@ -112,29 +113,48 @@
           </li>
         </ul>
       </div>
+
+      <button
+        class="navbar-close btn btn-sm"
+        id="close-button"
+        type="button"
+        aria-label="_('Hide banner menu')"
+        @click="toggleAppDisplay">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+      </button>
     </nav>
 
     <!-- Capture title and date -->
     <nav
-      class="navbar navbar-light justify-content-center title-nav fixed-top"
+      class="navbar navbar-light justify-content-center title-nav"
       id="second-navbar"
       :style="navbarStyle">
-      <span class="hidden" v-if="!currentSnapshot">&nbsp;</span>
-      <span v-if="currentSnapshot">
-        <span class="strong mr-1">
-          {{_('Current Capture')}}: 
-          <span class="ml-1" v-if="config.title">
-            {{ config.title }}
-          </span>
+
+      <div class="w-100 d-flex" id="searchdiv">
+        <form
+          class="form-inline flex-grow-1"
+          role="search"
+          @submit="gotoUrl">
+          <input
+            id="theurl"
+            type="text"
+            :value="config.url"
+            height="31"
+            aria-label="_('Search for archival capture of URL')"
+            title="_('Search for archival capture of URL')">
+        </form>
+        <span class="replay-date" v-if="currentSnapshot">
+          {{currentSnapshot.getTimeDateFormatted()}}
         </span>
-        <span class="mr-1" v-if="config.title">|</span>
-        {{currentSnapshot.getTimeDateFormatted()}}
-      </span>
+      </div>
     </nav>
 
     <!-- Timeline -->
     <div class="card border-top-0 border-left-0 border-right-0 timeline-wrap">
-      <div class="card-body" v-if="currentPeriod && showTimelineView">
+      <div class="card-body" v-if="currentPeriod && showTimelineView"> <!-- && timelineViewEnabled -->
         <div class="row">
           <div class="col col-12">
             <TimelineBreadcrumbs
@@ -152,7 +172,7 @@
             ></Timeline>
           </div>
         </div>
-      </div>    
+      </div>
     </div>
 
     <!-- Calendar -->
@@ -165,7 +185,7 @@
         </CalendarYear>
       </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -182,6 +202,7 @@ export default {
   //el: '[data-app="webrecorder-replay-app"]',
   data: function() {
     return {
+      displayApp: true,
       snapshots: [],
       currentPeriod: null,
       currentSnapshot: null,
@@ -205,6 +226,11 @@ export default {
     // bfcache otherwises prevent the query template from reloading as expected
     // when the user navigates there via browser back/forward buttons
     addEventListener('unload', (event) => { });
+
+    // wait for DOM to load and set body padding offset
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.style.paddingTop = `${this.$refs.appContainer.clientHeight}px`;
+    });
   },
   updated: function() {
     // set top frame title equal to value pulled from replay frame
@@ -229,6 +255,12 @@ export default {
     },
     printingEnabled() {
       return !this.config.disablePrinting;
+    },
+    timelineViewEnabled() {
+      return !this.config.disableTimelineView;
+    },
+    calendarViewEnabled() {
+      return !this.config.disableCalendarView;
     },
     previousSnapshot() {
       if (!this.currentSnapshotIndex) {
@@ -316,6 +348,10 @@ export default {
         window.location.href = this.config.prefix + ts + (ts ? "/" : "") + newUrl;
       }
     },
+    toggleAppDisplay() {
+      this.displayApp = !this.displayApp;
+      document.body.style.paddingTop = this.displayApp ? `${this.$refs.appContainer.clientHeight}px` : 0;
+    },
     toggleTimelineView() {
       this.showTimelineView = !this.showTimelineView;
       window.localStorage.setItem("showTimelineView", this.showTimelineView ? "1" : "0");
@@ -377,7 +413,7 @@ export default {
         this.showTimelineView = true;
       } else {
         this.showFullView = false;
-        this.showTimelineView = window.localStorage.getItem("showTimelineView") === "1";
+        this.showTimelineView = !this.config.disableTimelineView && window.localStorage.getItem("showTimelineView") === "1";
       }
     },
     updateTitle(title) {
@@ -388,13 +424,12 @@ export default {
 </script>
 
 <style>
-  body {
-    padding-top: 89px !important;
-  }
   .app {
     font-family: Calibri, Arial, sans-serif;
     /*border-bottom: 1px solid lightcoral;*/
     width: 100%;
+    box-shadow: 0px 0px 15px rgba(0,0,0,.5);
+    z-index: 100;
   }
   .app.expanded {
     /*height: 130px;*/
@@ -422,8 +457,10 @@ export default {
     max-height: 40px;
   }
   .title-nav {
-    margin-top: 50px;
     z-index: 80;
+  }
+  .divider:before {
+    content: ' / ';
   }
   #secondNavbar {
     height: 24px !important;
@@ -452,30 +489,21 @@ export default {
     height: 80vh;
   }
   #searchdiv {
-    height: 31px;
+    position: relative;
+    align-items: center;
+  }
+  .replay-date {
+    position: absolute;
+    right: 0;
+    margin-right: 10px;
+    padding-left: 25px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), #fff 15%, #fff);
   }
   #theurl {
-    width: 250px;
-  }
-  @media (min-width: 576px) {
-    #theurl {
-      width: 350px;
-    }
-  }
-  @media (min-width: 768px) {
-    #theurl {
-      width: 500px;
-    }
-  }
-  @media (min-width: 992px) {
-    #theurl {
-      width: 600px;
-    }
-  }
-  @media (min-width: 1200px) {
-    #theurl {
-      width: 900px;
-    }
+    width: 100%;
+    border: 0;
+    padding: 4px 7px;
+    border: solid 1px #000;
   }
   #toggles {
     align-items: center;

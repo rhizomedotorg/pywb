@@ -21,7 +21,7 @@ html, body
 {% include 'vue_loc.html' %}
 
 </head>
-<body style="margin: 0px; padding: 0px;">
+<body style="margin: 0px;">
 
 <div id="app" style="width: 100%; height: 200px"></div>
 <script>
@@ -35,7 +35,11 @@ html, body
       navbarColor: "{{ ui.navbar_color_hex | default('212529') }}",
       navbarLightButtons: "{{ ui.navbar_light_buttons }}",
       logoHomeUrl: "{{ ui.logo_home_url }}",
-      disablePrinting: "{{ ui.disable_printing }}",
+      disablePrinting: {{ ui.disable_printing|tojson() }},
+      disableTimelineView: {{ ui.disable_timeline|tojson() }},
+      disableCalendarView: {{ ui.disable_calendar|tojson() }},
+      artwork: "{{ metadata.artwork }}",
+      artworkLink: "{{ metadata.link }}",
       allLocales: allLocales
     },
     "{{ env.pywb_lang | default('en') }}",

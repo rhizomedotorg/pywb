@@ -104,7 +104,7 @@
       navbarColor: "{{ ui.navbar_color_hex | default('212529') }}",
       navbarLightButtons: "{{ ui.navbar_light_buttons }}",
       logoHomeUrl: "{{ ui.logo_home_url }}",
-      disablePrinting: "{{ ui.disable_printing }}",
+      disablePrinting: {{ ui.disable_printing|tojson() }},
       allLocales: allLocales
     },
     "{{ env.pywb_lang | default('en') }}",
