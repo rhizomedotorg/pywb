@@ -22,6 +22,7 @@
       </div>
 
       <button
+        v-if="calendarViewEnabled || timelineViewEnabled"
         class="navbar-toggler btn btn-sm"
         id="collapse-button"
         type="button"
@@ -153,7 +154,7 @@
     </nav>
 
     <!-- Timeline -->
-    <div class="card border-top-0 border-left-0 border-right-0 timeline-wrap">
+    <div v-if="timelineViewEnabled" class="card border-top-0 border-left-0 border-right-0 timeline-wrap">
       <div class="card-body" v-if="currentPeriod && showTimelineView"> <!-- && timelineViewEnabled -->
         <div class="row">
           <div class="col col-12">
@@ -176,7 +177,7 @@
     </div>
 
     <!-- Calendar -->
-    <div class="card" id="calendar-card" v-if="currentPeriod && showFullView && currentPeriod.children.length">
+    <div class="card" id="calendar-card" v-if="currentPeriod && showFullView && currentPeriod.children.length && calendarViewEnabled">
       <div class="card-body" id="calendar-card-body">
         <CalendarYear
           :period="currentPeriod"
@@ -247,7 +248,9 @@ export default {
     navbarStyle() {
       return {
         '--navbar-background': `#${this.config.navbarBackground}`,
-        '--navbar-color': `#${this.config.navbarColor}`
+        '--navbar-color': `#${this.config.navbarColor}`,
+        '--link-color': `#${this.config.linkColor}`,
+        '--hover-color': `#${this.config.hoverColor}`
       }
     },
     lightButtons() {
@@ -424,6 +427,10 @@ export default {
 </script>
 
 <style>
+  ::selection {
+    color: var(--navbar-background);
+    background: var(--hover-color);
+  }
   .app {
     font-family: Calibri, Arial, sans-serif;
     /*border-bottom: 1px solid lightcoral;*/
@@ -462,6 +469,15 @@ export default {
   .divider:before {
     content: ' / ';
   }
+  .nav-links a {
+    text-decoration: none;
+  }
+  .nav-links a:link, .nav-links a:visited {
+    color: var(--link-color);
+  }
+  .nav-links a:hover, .nav-links a:active {
+    color: var(--hover-color);
+  }
   #secondNavbar {
     height: 24px !important;
   }
@@ -484,6 +500,9 @@ export default {
   #navbarCollapse.show ul#toggles li {
     margin-left: 0px;
   }
+  #close-button svg path {
+    fill: var(--navbar-color);
+  }
   .iframe iframe {
     width: 100%;
     height: 80vh;
@@ -497,13 +516,16 @@ export default {
     right: 0;
     margin-right: 10px;
     padding-left: 25px;
-    background: linear-gradient(90deg, rgba(255,255,255,0), #fff 15%, #fff);
+    background: linear-gradient(90deg, rgba(255,255,255,0), var(--navbar-background) 15%, var(--navbar-background));
+    color: var(--navbar-color);
   }
   #theurl {
     width: 100%;
     border: 0;
     padding: 4px 7px;
-    border: solid 1px #000;
+    border: solid 1px var(--navbar-color);
+    color:  var(--navbar-color);
+    background: transparent;
   }
   #toggles {
     align-items: center;
