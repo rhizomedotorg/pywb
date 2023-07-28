@@ -37,9 +37,9 @@ html, body
       hoverColor: "{{ ui.hover_color_hex | default('0056b3') }}",
       navbarLightButtons: "{{ ui.navbar_light_buttons }}",
       logoHomeUrl: "{{ ui.logo_home_url }}",
-      disablePrinting: {{ ui.disable_printing|tojson() }},
-      disableTimelineView: {{ ui.disable_timeline|tojson() }},
-      disableCalendarView: {{ ui.disable_calendar|tojson() }},
+      disablePrinting: {{ ui.disable_printing|default(false, true)|tojson() }},
+      disableTimelineView: {{ ui.disable_timeline|default(false, true)|tojson() }},
+      disableCalendarView: {{ ui.disable_calendar|default(false, true)|tojson() }},
       artwork: "{{ metadata.artwork }}",
       artworkLink: "{{ metadata.link }}",
       allLocales: allLocales
