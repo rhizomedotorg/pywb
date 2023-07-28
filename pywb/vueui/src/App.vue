@@ -5,10 +5,10 @@
       class="navbar navbar-light navbar-expand-lg top-navbar justify-content-center"
       :style="navbarStyle">
       <a class="navbar-brand my-1" :href="config.logoHomeUrl" v-if="config.logoHomeUrl">
-        <img :src="config.logoImg" id="logo-img" alt="_('pywb logo')">
+        <img :src="config.logoImg" id="logo-img" alt="pywb logo">
       </a>
       <div class="navbar-brand my-1" v-else>
-        <img :src="config.logoImg" id="logo-img" alt="_('pywb logo')">
+        <img :src="config.logoImg" id="logo-img" alt="pywb logo">
       </div>
 
       <div class="nav-links">
@@ -30,7 +30,7 @@
         data-target="#navbarCollapse"
         aria-controls="navbarCollapse"
         aria-expanded="false"
-        aria-label="_('Toggle navigation')">
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse ml-auto" id="navbarCollapse">
@@ -40,20 +40,20 @@
             <button
               class="btn btn-sm"
               :class="{active: showFullView, 'btn-outline-light': lightButtons, 'btn-outline-dark': !lightButtons}"
-              :title="_('Previous capture')"
+              title="Previous capture"
               v-if="previousSnapshot"
               @click="gotoPreviousSnapshot">
-              <i class="fas fa-arrow-left" :title="_('Previous capture')"></i>
+              <i class="fas fa-arrow-left" title="Previous capture"></i>
             </button>
           </li>
           <li class="nav-item">
             <button
               class="btn btn-sm"
               :class="{active: showFullView, 'btn-outline-light': lightButtons, 'btn-outline-dark': !lightButtons}"
-              :title="_('Next capture')"
+              title="Next capture"
               v-if="nextSnapshot"
               @click="gotoNextSnapshot">
-              <i class="fas fa-arrow-right" :title="_('Next capture')"></i>
+              <i class="fas fa-arrow-right" title="Next capture"></i>
             </button>
           </li>
           -->
@@ -64,7 +64,7 @@
               :aria-pressed="(showFullView ? true : false)"
               @click="showFullView = !showFullView"
               v-if="calendarViewEnabled && hasReplayFrame()"
-              :title="(showFullView ? _('Hide calendar') : _('Show calendar'))">
+              :title="(showFullView ? 'Hide calendar' : 'Show calendar')">
               <i class="far fa-calendar-alt"></i>
             </button>
           </li>
@@ -75,7 +75,7 @@
               :aria-pressed="showTimelineView"
               @click="toggleTimelineView"
               v-if="timelineViewEnabled && hasReplayFrame()"
-              :title="(showTimelineView ? _('Hide timeline') : _('Show timeline'))">
+              :title="(showTimelineView ? 'Hide timeline' : 'Show timeline')">
               <i class="far fa-chart-bar"></i>
             </button>
           </li>
@@ -86,7 +86,7 @@
               :aria-pressed="printReplayFrame"
               @click="printReplayFrame"
               v-if="printingEnabled && hasReplayFrame()"
-              :title="_('Print')">
+              title="Print">
               <i class="fas fa-print"></i>
             </button>
           </li>
@@ -99,8 +99,8 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              :title="_('Select language')">
-              <i class="fas fa-globe-africa" :title="_('Language')"></i>
+              title="Select language">
+              <i class="fas fa-globe-africa" title="Language"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="locale-dropdown">
               <a
@@ -119,7 +119,7 @@
         class="navbar-close btn btn-sm"
         id="close-button"
         type="button"
-        aria-label="_('Hide banner menu')"
+        aria-label="Hide banner menu"
         @click="toggleAppDisplay">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -144,8 +144,8 @@
             type="text"
             :value="config.url"
             height="31"
-            aria-label="_('Search for archival capture of URL')"
-            title="_('Search for archival capture of URL')">
+            aria-label="Search for archival capture of URL"
+            title="Search for archival capture of URL">
         </form>
         <span class="replay-date" v-if="currentSnapshot">
           {{currentSnapshot.getTimeDateFormatted()}}
