@@ -1,7 +1,6 @@
 from gevent.monkey import patch_all; patch_all()
 
 from werkzeug.routing import Map, Rule, RequestRedirect, Submount
-from werkzeug.wsgi import pop_path_info
 from six.moves.urllib.parse import urljoin, parse_qsl
 from six import iteritems
 from warcio.utils import to_native_str
@@ -32,6 +31,46 @@ import re
 import traceback
 import requests
 import logging
+
+
+def pop_path_info(environ):
+    """Removes and returns the next segment of `PATH_INFO`, pushing it onto
+    `SCRIPT_NAME`.  Returns `None` if there is nothing left on `PATH_INFO`.
+    If there are empty segments (``'/foo//bar``) these are ignored but
+    properly pushed to the `SCRIPT_NAME`:
+    >>> env = {'SCRIPT_NAME': '/foo', 'PATH_INFO': '/a/b'}
+    >>> pop_path_info(env)
+    'a'
+    >>> env['SCRIPT_NAME']
+    '/foo/a'
+    >>> pop_path_info(env)
+    'b'
+    >>> env['SCRIPT_NAME']
+    '/foo/a/b'
+    .. versionadded:: 0.5
+    :param environ: the WSGI environment that is modified.
+    """
+    path = environ.get('PATH_INFO')
+    if not path:
+        return None
+
+    script_name = environ.get('SCRIPT_NAME', '')
+
+    # shift multiple leading slashes over
+    old_path = path
+    path = path.lstrip('/')
+    if path != old_path:
+        script_name += '/' * (len(old_path) - len(path))
+
+    if '/' not in path:
+        environ['PATH_INFO'] = ''
+        environ['SCRIPT_NAME'] = script_name + path
+        return path
+
+    segment, path = path.split('/', 1)
+    environ['PATH_INFO'] = '/' + path
+    environ['SCRIPT_NAME'] = script_name + segment
+    return segment
 
 
 # ============================================================================
