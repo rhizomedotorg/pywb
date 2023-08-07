@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
 html, body
 {
@@ -40,8 +41,8 @@ html, body
       disablePrinting: {{ ui.disable_printing|default(false, true)|tojson() }},
       disableTimelineView: {{ ui.disable_timeline|default(false, true)|tojson() }},
       disableCalendarView: {{ ui.disable_calendar|default(false, true)|tojson() }},
-      artwork: "{{ metadata.artwork }}",
-      artworkLink: "{{ metadata.link }}",
+      label: "{{ metadata.label }}",
+      artbaseLink: "{{ metadata.artbase_link }}",
       allLocales: allLocales
     },
     "{{ env.pywb_lang | default('en') }}",

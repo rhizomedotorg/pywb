@@ -12,11 +12,12 @@
       </div>
 
       <div class="nav-links">
-        <a href="https://rhizome.org">rhizome.org</a>
-        <span class="divider"></span>
         <a href="https://artbase.rhizome.org">ArtBase</a>
-        <span class="divider" v-if="config.artwork"></span>
-        <a v-if="config.artwork" :href="config.artworkLink">{{ config.artwork }}</a>
+        <template v-if="config.label">
+          <span class="divider"></span>
+          <a v-if="config.artbaseLink" :href="config.artbaseLink">{{ config.label }}</a>
+          <span v-else>{{ config.label }}</span>
+        </template>
         <span class="divider"></span>
         <span v-if="config.title">{{ config.title }}</span>
       </div>
@@ -503,6 +504,14 @@ export default {
   #close-button svg path {
     fill: var(--navbar-color);
   }
+  @media screen and (max-width: 600px) {
+    #close-button {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+    }
+  }
+
   .iframe iframe {
     width: 100%;
     height: 80vh;
@@ -518,6 +527,11 @@ export default {
     padding-left: 25px;
     background: linear-gradient(90deg, rgba(255,255,255,0), var(--navbar-background) 15%, var(--navbar-background));
     color: var(--navbar-color);
+  }
+  @media screen and (max-width: 500px) {
+    .replay-date {
+      display: none;
+    }
   }
   #theurl {
     width: 100%;
