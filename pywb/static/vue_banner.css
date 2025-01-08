@@ -8,27 +8,27 @@
   font-family: "u001";
   font-weight: normal;
   font-style: normal;
-  src: url('/static/fonts/u001/u001-reg.ttf') format('truetype');
+  src: url('https://static.rhizome.org/static/fonts/u001-rhizome/U001-Reg-v2.4.woff') format('woff');
 }
 @font-face {
   font-family: "u001";
   font-weight: normal;
   font-style: italic;
-  src: url('/static/fonts/u001/u001-ita.ttf') format('truetype');
+  src: url('https://static.rhizome.org/static/fonts/u001-rhizome/U001-Ita-v2.4.woff') format('woff');
 }
 
 @font-face {
   font-family: "u001";
   font-weight: bold;
   font-style: normal;
-  src: url('/static/fonts/u001/u001-bol.ttf') format('truetype');
+  src: url('https://static.rhizome.org/static/fonts/u001-rhizome/U001-Bol-v2.4.woff') format('woff');
 }
 
 @font-face {
   font-family: "u001";
   font-weight: bold;
   font-style: italic;
-  src: url('/static/fonts/u001/u001-bolita.ttf') format('truetype');
+  src: url('https://static.rhizome.org/static/fonts/u001-rhizome/U001-BolIta-v2.4.woff') format('woff');
 }
 
 body .app {
